@@ -1,5 +1,6 @@
 #include<iostream>
 #include<cstdlib>
+#include<iomanip>
 using namespace std;
 struct node
 {
@@ -12,7 +13,7 @@ typedef struct Node
 	int address;
 	int data;
 	struct Node* next;
-}Node,*List;
+}Node, *List;
 
 void Reserve(List L, int K)
 {
@@ -20,6 +21,15 @@ void Reserve(List L, int K)
 		return;
 	if (!L)
 		return;
+	List p = L->next;
+	int n = 0;
+	while (p)
+	{
+		n++;
+		p = p->next;
+	}
+	int loops = n / K;
+
 	List head = L;
 	List prev = L->next;
 	if (!prev)
@@ -27,27 +37,49 @@ void Reserve(List L, int K)
 	List pcur = prev->next;
 	if (!pcur)
 		return;
-	int k = K - 2;
-	while (pcur)
+	
+	for (int i = 0; i < loops; i++)
 	{
-		prev->next = pcur->next;
-		pcur->next = head->next;
-		head->next = pcur;
-		pcur = prev->next;
-		if (k)
+		int k = K - 1;
+		while (k--)
 		{
-			k--;
+			prev->next = pcur->next;
+			pcur->next = head->next;
+			head->next = pcur;
+			pcur = prev->next;
 		}
-		else if(pcur&&k==0)
+		if (pcur)
 		{
 			head = prev;
 			prev = pcur;
 			pcur = pcur->next;
-			k = K - 2;
 		}
 	}
+	
 }
-
+void printList(List L)
+{
+	if (!L)
+		return;
+	List P = L->next;
+	bool tag = true;
+	while (P)
+	{
+		cout.fill('0');
+		if (tag)
+		{
+			cout <<setw(5)<< P->address << " " << P->data<<" ";
+			tag = false;
+		}	
+		else
+		{
+			cout <<setw(5)<< P->address << endl;
+			cout <<setw(5)<< P->address << " " << P->data << " ";
+		}
+		P = P->next;
+	}
+	cout << -1 << endl;
+}
 int main()
 {
 	node a[100000];
@@ -78,6 +110,7 @@ int main()
 		rear->next = S;
 		rear = S;
 	}
-	Reserve(L, 6);
+	Reserve(L,K);
+	printList(L);
 	return 0;
 }
