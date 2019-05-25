@@ -14,32 +14,40 @@ typedef struct Node
 	struct Node* next;
 }Node,*List;
 
-void Reserve(List L)
+void Reserve(List L, int K)
 {
-
-}
-void ReserveK(List L, int K)
-{
-	List front, rear;
-	front = rear = L;
-	while (true)
+	if (K < 2)
+		return;
+	if (!L)
+		return;
+	List head = L;
+	List prev = L->next;
+	if (!prev)
+		return;
+	List pcur = prev->next;
+	if (!pcur)
+		return;
+	int k = K - 2;
+	while (pcur)
 	{
-		int k = K;
-		while (rear->next&&k)
+		prev->next = pcur->next;
+		pcur->next = head->next;
+		head->next = pcur;
+		pcur = prev->next;
+		if (k)
 		{
-			rear = rear->next;
 			k--;
 		}
-		if (k == 0)
+		else if(pcur&&k==0)
 		{
-
-		}
-		else
-		{
-			break;
+			head = prev;
+			prev = pcur;
+			pcur = pcur->next;
+			k = K - 2;
 		}
 	}
 }
+
 int main()
 {
 	node a[100000];
@@ -53,10 +61,12 @@ int main()
 	}
 
 	List L = (List)malloc(sizeof(struct Node));
-	L->address = start_address;
-	L->data = a[start_address].data;
-	L->next = NULL;
-	List rear = L;
+	List rear = (List)malloc(sizeof(struct Node));
+	L->next = rear;
+	rear->address = start_address;
+	rear->data = a[start_address].data;
+	rear->next = NULL;
+
 	while (true)
 	{
 		List S = (List)malloc(sizeof(Node));
@@ -68,5 +78,6 @@ int main()
 		rear->next = S;
 		rear = S;
 	}
+	Reserve(L, 6);
 	return 0;
 }
